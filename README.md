@@ -39,6 +39,10 @@ ReadableGitHubは、GitHub上のあらゆるコードブロックに「🤖 解�
 3. **AI解説を確認**: 目的・重要ポイント・学習ヒントが表示される
 4. **解説を閉じる**: パネル右上の「×」で解説を非表示
 
+
+![alt text](image-1.png)
+![alt text](image.png)
+
 ## 🛠 技術仕様
 
 | ファイル | 役割 |
@@ -55,13 +59,8 @@ ReadableGitHubは、GitHub上のあらゆるコードブロックに「🤖 解�
 
 - **Gemini Nano AI APIの利用不可エラー**
 - **Content Security Policy (CSP) 制約によるインライン実行エラー**
-- **chrome.storageがundefinedになる問題**[1][3][4][6]
-  - ローカル開発環境（localhost）でchrome.storageが参照できない場合がある[1][3]
-  - 拡張機能のリロードではなく、削除して再追加が必要な場合がある[3][6]
-  - **Chrome DevToolsでの確認方法**:
-    - F12を押してコンソールを開く
-    - `chrome.storage.sync.get('apiKey')`を実行してAPIキーが保存されているか確認[2][7]
-    - `chrome.storage`がundefinedになっている問題が確認できる場合、これは解決可能な問題でAPIキーの保存と使用は可能
+- **chrome.storageがundefinedになる問題**
+
 
 ## 🤝 貢献
 
