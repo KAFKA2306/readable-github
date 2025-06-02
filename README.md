@@ -40,8 +40,8 @@ ReadableGitHubは、GitHub上のあらゆるコードブロックに「🤖 解�
 4. **解説を閉じる**: パネル右上の「×」で解説を非表示
 
 
-![alt text](image-1.png)
-![alt text](image.png)
+![alt text](resources/image-1.png)
+![alt text](resources/image.png)
 
 ## 🛠 技術仕様
 
