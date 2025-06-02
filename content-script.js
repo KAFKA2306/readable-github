@@ -84,7 +84,8 @@ class GitHubEnhancer {
 
     async callGemini(code) {
         const response = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${this.apiKey}`,
+            // 正しいモデル名に変更
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${this.apiKey}`,
             {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -97,6 +98,8 @@ class GitHubEnhancer {
                 })
             }
         );
+        // 以下は同じ
+
 
         if (!response.ok) {
             const errorText = await response.text();
@@ -108,6 +111,7 @@ class GitHubEnhancer {
         return data.candidates?.[0]?.content?.parts?.[0]?.text || '解説を生成できませんでした';
     }
 
+
     showResult(pre, text) {
         // 既存の結果を削除
         const existing = pre.querySelector('.result');
@@ -117,14 +121,17 @@ class GitHubEnhancer {
         div.className = 'result';
         div.innerHTML = `
             <div class="result-header">
-                <span>🤖 コード解説</span>
-                <button onclick="this.parentElement.parentElement.remove()">×</button>
+                🤖 コード解説
+                <button onclick="this.closest('.result').remove()">✕</button>
             </div>
             <div class="result-content">${text}</div>
         `;
+        pre.appendChild(div);
         
-        pre.parentNode.insertBefore(div, pre.nextSibling);
+        // 解説が表示されたらスクロールして見やすくする
+        div.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
+
 }
 
 // ページロード後に初期化
