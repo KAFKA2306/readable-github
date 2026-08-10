@@ -1,0 +1,11 @@
+! Title: KAFKA DNS overrides
+! Description: Public, data-only custom DNS block/allow rules for KAFKA private DNS.
+! Syntax: AdGuard DNS filtering rules.
+! Broad baseline filtering is provided separately by the official AdGuard DNS filter.
+! Keep this file small and evidence-based. Never put credentials, hostnames that reveal private infrastructure, or device data here.
+!
+! Block example (disabled):
+! ||ads.example^
+!
+! Allow example (disabled):
+! @@||login.example^
