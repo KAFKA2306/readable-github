@@ -890,17 +890,17 @@ class AdvancedGitHubEnhancer {
         }
 
         const response = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${this.apiKey}`,
+            'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent',
             {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-goog-api-key': this.apiKey
+                },
                 body: JSON.stringify({
                     contents: [{ parts: [{ text: prompt }] }],
                     generationConfig: {
-                        maxOutputTokens: 4096,
-                        temperature: 0.7,
-                        topP: 0.8,
-                        topK: 40
+                        maxOutputTokens: 4096
                     },
                     safetySettings: [
                         {
