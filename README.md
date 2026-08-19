@@ -1,81 +1,65 @@
 # ReadableGitHub
 
-**コードを理解するために、GitHubから離れる必要はない。**
+GitHubを離れず、読んでいるコードの文脈を保ったまま説明を参照するためのChrome拡張の試作です。
 
-ReadableGitHubは、GitHub上のコードブロックに「🤖 解説」ボタンを追加し、その場でGemini AIによる日本語のコード解説を表示するChrome拡張機能です。コードを別画面へコピーするのではなく、読んでいる場所に目的・重要ポイント・学習ヒントを重ねます。
+## 現在確認できる構成
 
-## 🚀 概要
+- Manifest V3 (`manifest.json`)
+- GitHubページへ `content-script.js` / `styles.css` を注入
+- popupからAPI keyを保存
+- repository / file / commit / pull requestのURL文脈を取得
+- コード説明・repository概要等のprompt生成処理
 
-ReadableGitHubは、GitHub上のあらゆるコードブロックに「🤖 解説」ボタンを追加し、Gemini AIが日本語でコードの目的・重要ポイント・学習ヒントを即座に解説するChrome拡張機能です。
+現在のsourceにはGemini APIとGitHub APIへのcross-origin `fetch()` がcontent script内にあります。Chrome公式仕様ではcontent scriptのnetwork requestはsame-origin policyの対象なので、**AI説明機能を現在動作確認済みとは扱いません**。修正状況は [Issue #6](https://github.com/KAFKA2306/readable-github/issues/6) で管理します。
 
-### ✨ 主な機能
+また、現在の実装はGoogleのhosted Gemini APIを呼び出しており、Gemini Nano / Chrome built-in AIを利用する実装ではありません。
 
-- **ワンクリック解説**: コードブロック右上の「🤖 解説」ボタンで即座にAI解説を表示
-- **日本語対応**: すべての解説が分かりやすい日本語で提供
-- **リアルタイム処理**: ページ読み込み時に自動でボタンを追加
-- **簡単設定**: ポップアップからGemini APIキーを設定するだけ
+## インストール
 
-## 📦 インストール
+このrepositoryをcloneまたはdownloadし、`chrome://extensions` のデベロッパーモードから「パッケージ化されていない拡張機能を読み込む」でrepository rootを選択します。
 
-### 必要な環境
-- Chrome バージョン127以上（Chrome Canary推奨）
-- Gemini API キー（[Google AI Studio](https://aistudio.google.com/)で無料取得）
+特定のChrome最小versionやCanaryの利用は、現在のrepositoryでは実機検証していないため保証しません。
 
-### セットアップ手順
+## データと権限
 
-1. **拡張機能の読み込み**
-   ```
-   chrome://extensions → デベロッパーモード ON → 
-   「パッケージ化されていない拡張機能を読み込む」→ 
-   プロジェクトフォルダを選択
-   ```
+`manifest.json` が現在宣言している権限は次です。
 
-2. **APIキーの設定**
-   - Chromeツールバーの拡張機能アイコンをクリック
-   - Gemini APIキーを入力して「保存」
+- `storage`
+- `activeTab`
+- `https://github.com/*` のhost permission / content script match
 
-## 🎯 使い方
+API keyは現在 `chrome.storage.sync` に保存され、content scriptへ読み込まれます。Chrome公式はsensitive dataについて`storage.sync`ではなく`storage.session`を推奨しているため、この保存方式もIssue #6の修正対象です。
 
-1. **GitHubページを開く**: 任意のコードリポジトリやファイルページにアクセス
-2. **解説ボタンをクリック**: コードブロック右上の「🤖 解説」ボタンを押す
-3. **AI解説を確認**: 目的・重要ポイント・学習ヒントが表示される
-4. **解説を閉じる**: パネル右上の「×」で解説を非表示
+現在のAI requestが成立した場合、promptへ含めたコード・repository文脈はGoogle Gemini APIへ送信されます。private repositoryや機密コードでの利用は、Issue #6のprivacy/network boundaryが修正・実機検証されるまで推奨しません。
 
+AIが生成する説明は読解補助であり、コードの正しさ、実行結果、security、repositoryの正式仕様を証明しません。原コードと実行証拠を優先してください。
 
-![alt text](resources/image-1.png)
-![alt text](resources/image.png)
+## 開発時の静的確認
 
-## 🛠 技術仕様
+追加dependencyなしで、CIと同じ最小確認を実行できます。
 
-| ファイル | 役割 |
-|----------|------|
-| `manifest.json` | 拡張機能設定・権限定義 |
-| `content-script.js` | メイン機能・UI操作 |
-| `popup.js` | 設定画面ロジック |
-| `popup.html` | ポップアップUI |
-| `styles.css` | スタイル定義 |
+```bash
+node --check config.js && node --check content-script.js && node --check popup.js && node -e "JSON.parse(require('fs').readFileSync('manifest.json', 'utf8'))"
+```
 
-## ⚠️ 既知の問題
+これはJavaScript構文とmanifest JSONの検査であり、Chrome上の実動作確認ではありません。
 
-現在確認されている技術的課題：
+## 未検証
 
-- **Gemini Nano AI APIの利用不可エラー**
-- **Content Security Policy (CSP) 制約によるインライン実行エラー**
-- **chrome.storageがundefinedになる問題**
+- GitHubの現在DOMでのbutton injection
+- Gemini request / response表示
+- GitHub APIからのrepository情報取得
+- invalid API key / network failure時の実ブラウザ挙動
+- Chrome Web Store公開
+- onboarding pack機能（Issue #1）
 
+## 一次資料
 
-## 🤝 貢献
+- Chrome Extensions: https://developer.chrome.com/docs/extensions/
+- Cross-origin network requests: https://developer.chrome.com/docs/extensions/develop/concepts/network-requests
+- Chrome storage: https://developer.chrome.com/docs/extensions/reference/api/storage
+- Gemini API: https://ai.google.dev/gemini-api/docs
 
-プロジェクトへの貢献を歓迎します！以下の方法で参加できます：
+## License
 
-- **バグ報告**: Issuesでエラーや不具合を報告
-- **機能提案**: 新機能のアイデアを共有
-- **コード改善**: Pull Requestで修正・機能追加
-
-## 📄 ライセンス
-
-このプロジェクトはMITライセンスの下で公開されています。
-
----
-
-💡 **ヒント**: Chrome Canaryでの使用が最も安定しています
+repository内にlicense fileを確認できないため、license条件は現時点ではREADMEで断定しません。
