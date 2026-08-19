@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          package-manager-cache: false
+      - name: Check JavaScript and manifest
+        run: >-
+          node --check config.js &&
+          node --check content-script.js &&
+          node --check popup.js &&
+          node -e "JSON.parse(require('fs').readFileSync('manifest.json', 'utf8'))"
+      - name: Check clean checkout
+        run: git diff --exit-code && test -z "$(git status --porcelain)"
