@@ -1,63 +1,42 @@
 class Popup {
-    constructor() {
-        this.input = document.getElementById('apiKey');
-        this.save = document.getElementById('save');
-        this.status = document.getElementById('status');
-        this.init();
+  constructor() {
+    this.input = document.getElementById('apiKey');
+    this.save = document.getElementById('save');
+    this.status = document.getElementById('status');
+    this.init();
+  }
+
+  async init() {
+    const status = await chrome.runtime.sendMessage({ action: 'apiKey:getStatus' });
+    this.input.value = '';
+    this.input.placeholder = status?.configured ? 'このセッションでは設定済み' : 'AIzaSy...';
+    this.updateStatus(Boolean(status?.configured));
+    this.save.onclick = () => this.saveKey();
+  }
+
+  async saveKey() {
+    const apiKey = this.input.value.trim();
+    if (!apiKey) {
+      this.updateStatus(false, 'APIキーを入力してください');
+      return;
     }
 
-    async init() {
-        // APIキーを取得して表示
-        const {apiKey} = await chrome.storage.sync.get('apiKey');
-        this.input.value = apiKey || '';
-        this.updateStatus(!!apiKey);
-        this.save.onclick = () => this.saveKey();
+    try {
+      const response = await chrome.runtime.sendMessage({ action: 'apiKey:set', apiKey });
+      if (!response?.ok) throw new Error(response?.error || '保存に失敗しました');
+      this.input.value = '';
+      this.input.placeholder = 'このセッションでは設定済み';
+      this.updateStatus(true, 'このブラウザセッションに設定しました');
+    } catch (error) {
+      console.error('APIキー保存エラー:', error);
+      this.updateStatus(false, error.message);
     }
+  }
 
-    async saveKey() {
-        const apiKey = this.input.value.trim();
-        if (!apiKey) {
-            this.updateStatus(false, 'APIキーを入力してください');
-            return;
-        }
-
-        try {
-            // APIキーを保存
-            await chrome.storage.sync.set({apiKey});
-            
-            // アクティブタブを取得
-            const [tab] = await chrome.tabs.query({active: true, currentWindow: true});
-            
-            // GitHubページかチェック
-            if (tab && tab.url && tab.url.includes('github.com')) {
-                // コンテンツスクリプトにメッセージ送信
-                try {
-                    await chrome.tabs.sendMessage(tab.id, {
-                        action: 'updateApiKey', 
-                        apiKey: apiKey
-                    });
-                    this.updateStatus(true, 'APIキーが保存され、ページに適用されました');
-                } catch (e) {
-                    console.log('コンテンツスクリプトにメッセージを送信できませんでした:', e);
-                    this.updateStatus(true, 'APIキーが保存されました（ページを更新してください）');
-                }
-            } else {
-                this.updateStatus(true, 'APIキーが保存されました');
-            }
-        } catch (e) {
-            console.error('APIキー保存エラー:', e);
-            this.updateStatus(false, 'エラーが発生しました');
-        }
-    }
-
-    updateStatus(hasKey, message = null) {
-        if (message) {
-            this.status.textContent = message;
-        } else {
-            this.status.textContent = hasKey ? '設定済み' : '未設定';
-        }
-        this.status.className = hasKey ? 'active' : 'inactive';
-    }
+  updateStatus(hasKey, message = null) {
+    this.status.textContent = message || (hasKey ? '設定済み（セッションのみ）' : '未設定');
+    this.status.className = hasKey ? 'active' : 'inactive';
+  }
 }
 
 new Popup();
