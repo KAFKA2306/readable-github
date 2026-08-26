@@ -20,9 +20,15 @@ jobs:
           package-manager-cache: false
       - name: Check JavaScript and manifest
         run: >-
+          node --check background.js &&
           node --check config.js &&
           node --check content-script.js &&
           node --check popup.js &&
           node -e "JSON.parse(require('fs').readFileSync('manifest.json', 'utf8'))"
+      - name: Check privileged boundary
+        run: >-
+          ! grep -Eq 'generativelanguage\.googleapis\.com|api\.github\.com|chrome\.storage\.(sync|session).*apiKey|this\.apiKey' content-script.js &&
+          grep -q 'background.js' manifest.json &&
+          grep -q 'generativelanguage.googleapis.com' manifest.json
       - name: Check clean checkout
         run: git diff --exit-code && test -z "$(git status --porcelain)"
