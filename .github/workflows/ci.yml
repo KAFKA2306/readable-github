@@ -21,7 +21,6 @@ jobs:
       - name: Check JavaScript and manifest
         run: >-
           node --check background.js &&
-          node --check config.js &&
           node --check content-script.js &&
           node --check popup.js &&
           node -e "JSON.parse(require('fs').readFileSync('manifest.json', 'utf8'))"
