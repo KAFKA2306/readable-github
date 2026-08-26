@@ -1,127 +1,174 @@
-.explain-btn {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    background: #6366f1;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 4px 8px;
-    font-size: 12px;
-    cursor: pointer;
-    z-index: 100;
+/* GitHub content UI */
+.github-enhancer-fab {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 9999;
+  width: 48px;
+  height: 48px;
+  border: 0;
+  border-radius: 50%;
+  background: #238636;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-.explain-btn:hover {
-    background: #4f46e5;
+.github-enhancer-panel {
+  position: fixed;
+  top: 0;
+  right: -520px;
+  z-index: 10000;
+  width: min(520px, 100vw);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #0d1117;
+  color: #e6edf3;
+  border-left: 1px solid #30363d;
+  box-shadow: -4px 0 16px rgba(0, 0, 0, 0.35);
+  transition: right 160ms ease;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
-.explain-btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+.github-enhancer-panel.open {
+  right: 0;
 }
 
-.result {
-    margin-top: 12px;
-    border: 1px solid #e5e7eb;
-    border-radius: 6px;
-    /* ダークモード対応 */
-    background: #1f2937 !important;
-    color: #f9fafb !important;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-    max-width: 600px;
-    z-index: 1000;
+.github-enhancer-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border-bottom: 1px solid #30363d;
 }
 
-.result-header {
-    background: #374151 !important;
-    color: #f9fafb !important;
-    padding: 12px 16px;
-    border-bottom: 1px solid #4b5563;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-weight: 600;
+.github-enhancer-panel-title {
+  margin: 0;
+  font-size: 18px;
 }
 
-.result-header button {
-    background: #ef4444;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 18px;
-    padding: 4px 8px;
-    min-width: 30px;
-    min-height: 30px;
+.github-enhancer-close-btn,
+.github-enhancer-code-btn {
+  border: 0;
+  border-radius: 6px;
+  background: #238636;
+  color: #fff;
+  padding: 7px 12px;
+  cursor: pointer;
 }
 
-.result-header button:hover {
-    background: #dc2626;
+.github-enhancer-code-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 100;
+  font-size: 12px;
 }
 
-.result-content {
-    padding: 16px;
-    line-height: 1.6;
-    white-space: pre-line;
-    color: #f9fafb !important;
-    background: #1f2937 !important;
+.github-enhancer-code-btn:disabled {
+  opacity: 0.55;
+  cursor: wait;
 }
 
-/* ポップアップ設定 */
+.github-enhancer-panel-content {
+  overflow: auto;
+  padding: 16px;
+}
+
+.github-enhancer-tab-content {
+  display: none;
+}
+
+.github-enhancer-tab-content.active {
+  display: block;
+}
+
+.github-enhancer-content-area,
+.github-enhancer-error,
+.github-enhancer-info,
+.github-enhancer-explanation {
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 6px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.github-enhancer-content-area,
+.github-enhancer-explanation {
+  border: 1px solid #30363d;
+  background: #161b22;
+}
+
+.github-enhancer-info {
+  background: #1f6feb;
+  color: #fff;
+}
+
+.github-enhancer-error {
+  background: #da3633;
+  color: #fff;
+}
+
+@media (max-width: 600px) {
+  .github-enhancer-fab {
+    right: 16px;
+    bottom: 16px;
+  }
+}
+
+/* Extension popup */
 .popup {
-    width: 300px;
-    padding: 16px;
-    font-family: system-ui;
+  width: 300px;
+  padding: 16px;
+  font-family: system-ui, sans-serif;
 }
 
 .popup h1 {
-    margin: 0 0 16px 0;
-    font-size: 18px;
-    text-align: center;
+  margin: 0 0 16px;
+  font-size: 18px;
+  text-align: center;
 }
 
 .form {
-    margin-bottom: 16px;
+  margin-bottom: 16px;
 }
 
 .form label {
-    display: block;
-    margin-bottom: 4px;
-    font-size: 14px;
+  display: block;
+  margin-bottom: 4px;
+  font-size: 14px;
 }
 
 .form input {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #d1d5db;
-    border-radius: 4px;
-    margin-bottom: 8px;
-    box-sizing: border-box;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 8px;
+  padding: 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
 }
 
 .form button {
-    background: #6366f1;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 8px 16px;
-    cursor: pointer;
-    width: 100%;
-}
-
-.form button:hover {
-    background: #4f46e5;
+  width: 100%;
+  padding: 8px 16px;
+  border: 0;
+  border-radius: 4px;
+  background: #6366f1;
+  color: #fff;
+  cursor: pointer;
 }
 
 .status {
-    font-size: 14px;
+  font-size: 14px;
 }
 
 .active {
-    color: #059669;
+  color: #059669;
 }
 
 .inactive {
-    color: #dc2626;
+  color: #dc2626;
 }
