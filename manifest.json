@@ -1,9 +1,12 @@
 {
   "manifest_version": 3,
   "name": "ReadableGitHub",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "permissions": ["storage", "activeTab"],
-  "host_permissions": ["https://github.com/*"],
+  "host_permissions": ["https://generativelanguage.googleapis.com/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
   "content_scripts": [{
     "matches": ["https://github.com/*"],
     "js": ["content-script.js"],
