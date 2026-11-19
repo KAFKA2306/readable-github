@@ -37,18 +37,11 @@ node --check popup.js && \
 node -e "JSON.parse(require('fs').readFileSync('manifest.json', 'utf8'))"
 ```
 
-CIではさらに、content scriptにGemini/GitHub API endpoint、API key storage、`this.apiKey` が再導入されていないことを確認します。
+CIでは、content scriptのコードにGemini・GitHub APIの接続先やAPIキーの保存・保持の記述が再び入っていないかを静的に確認します。
 
 ## 検証状態
 
-Repository-level:
-
-- JavaScript syntax / manifest JSON: CI対象
-- content scriptのdirect cross-origin API request: 0をCIで検査
-- content scriptのAPI key storage/保持: 0をCIで検査
-- Gemini endpoint/model: `gemini-3.7-flash`
-
-実Chrome runtimeは未検証です。次の項目は実機確認が完了するまでPASS扱いしません。
+Chrome実機では次の項目が未検証です。
 
 - GitHub current DOMでのUI injection
 - popupでAPI key設定 → page explanation → response表示
